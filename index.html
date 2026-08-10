@@ -432,8 +432,8 @@
 <header>
   <div class="nav wrap" style="padding-left:0;padding-right:0;">
     <a href="#" class="brand" style="cursor:pointer;">
-      <span class="name">ZERO Digital Intel</span>
-      <span class="tag">Investigar | Analisar | Proteger</span>
+      <span class="name">ZERO</span>
+      <span class="tag">Digital Inteligence · OSINT</span>
     </a>
     <nav class="links">
       <a href="#objetivo">Objetivo</a>
@@ -952,22 +952,52 @@
         </div>
       </div>
 
-      <form class="contact-form" onsubmit="event.preventDefault(); this.querySelector('.form-note').textContent='Mensagem registada. Este formulário ainda não está ligado a um servidor — configure o envio antes de publicar.';">
+      <form class="contact-form" id="contactForm" action="https://formspree.io/f/mljrjnoo" method="POST">
+        <input type="hidden" name="_subject" value="Novo pedido — ZERO Digital Inteligence">
         <div>
           <label for="nome">Nome</label>
-          <input id="nome" type="text" placeholder="O seu nome" required>
+          <input id="nome" name="nome" type="text" placeholder="O seu nome" required>
         </div>
         <div>
           <label for="email">E-mail ou telefone</label>
-          <input id="email" type="text" placeholder="Como podemos responder-lhe" required>
+          <input id="email" name="email" type="text" placeholder="Como podemos responder-lhe" required>
         </div>
         <div>
           <label for="msg">Descreva o caso</label>
-          <textarea id="msg" rows="5" placeholder="O que precisa de localizar, verificar ou investigar" required></textarea>
+          <textarea id="msg" name="mensagem" rows="5" placeholder="O que precisa de localizar, verificar ou investigar" required></textarea>
         </div>
         <button type="submit">Enviar pedido</button>
         <div class="form-note mono"></div>
       </form>
+      <script>
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', async function(e){
+          e.preventDefault();
+          const note = contactForm.querySelector('.form-note');
+          const btn = contactForm.querySelector('button');
+          const original = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = 'A enviar…';
+          try{
+            const res = await fetch(contactForm.action, {
+              method: 'POST',
+              body: new FormData(contactForm),
+              headers: { 'Accept': 'application/json' }
+            });
+            if(res.ok){
+              note.textContent = 'Pedido enviado. Entraremos em contacto brevemente.';
+              contactForm.reset();
+            } else {
+              note.textContent = 'Não foi possível enviar. Tente novamente ou contacte-nos diretamente.';
+            }
+          } catch(err){
+            note.textContent = 'Não foi possível enviar. Tente novamente ou contacte-nos diretamente.';
+          } finally {
+            btn.disabled = false;
+            btn.textContent = original;
+          }
+        });
+      </script>
     </div>
   </div>
 </section>
